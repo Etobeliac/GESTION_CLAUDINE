@@ -19,25 +19,27 @@ if uploaded_file is not None:
     col_ancre = st.selectbox("Colonne contenant l'ancre", df.columns)
     col_lien = st.selectbox("Colonne contenant le lien", df.columns)
 
-    # Fonction pour insérer l'ancre et le lien dans le contenu HTML
-    def inserer_ancre_lien(html_content, ancre, lien):
-        soup = BeautifulSoup(html_content, 'html.parser')
-        paragraphes = soup.find_all('p')
+    # Bouton pour lancer le script
+    if st.button("Lancer le script"):
+        # Fonction pour insérer l'ancre et le lien dans le contenu HTML
+        def inserer_ancre_lien(html_content, ancre, lien):
+            soup = BeautifulSoup(html_content, 'html.parser')
+            paragraphes = soup.find_all('p')
 
-        if paragraphes:
-            paragraphe_choisi = random.choice(paragraphes)
-            ancre_lien = f'<a id="{ancre}" href="{lien}">{ancre}</a>'
-            paragraphe_choisi.append(BeautifulSoup(ancre_lien, 'html.parser'))
+            if paragraphes:
+                paragraphe_choisi = random.choice(paragraphes)
+                ancre_lien = f'<a id="{ancre}" href="{lien}">{ancre}</a>'
+                paragraphe_choisi.append(BeautifulSoup(ancre_lien, 'html.parser'))
 
-        return str(soup)
+            return str(soup)
 
-    # Appliquer la fonction à chaque ligne du DataFrame
-    df['G'] = df.apply(lambda row: inserer_ancre_lien(row[col_html], row[col_ancre], row[col_lien]), axis=1)
+        # Appliquer la fonction à chaque ligne du DataFrame
+        df['G'] = df.apply(lambda row: inserer_ancre_lien(row[col_html], row[col_ancre], row[col_lien]), axis=1)
 
-    # Afficher le DataFrame modifié
-    st.write(df)
+        # Afficher le DataFrame modifié
+        st.write(df)
 
-    # Optionnel : Sauvegarder le DataFrame modifié dans un nouveau fichier Excel
-    # df.to_excel('fichier_modifie.xlsx', index=False)
+        # Optionnel : Sauvegarder le DataFrame modifié dans un nouveau fichier Excel
+        # df.to_excel('fichier_modifie.xlsx', index=False)
 else:
     st.write("Veuillez télécharger un fichier Excel.")
