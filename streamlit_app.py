@@ -1,24 +1,34 @@
+import streamlit as st
 import pandas as pd
 from bs4 import BeautifulSoup
 import random
 
-# Charger le fichier Excel
-df = pd.read_excel('ton_fichier.xlsx')
+# Interface pour télécharger le fichier Excel
+uploaded_file = st.file_uploader("Choisissez un fichier Excel", type="xlsx")
 
-# Fonction pour insérer l'ancre et le lien dans le contenu HTML
-def inserer_ancre_lien(html_content, ancre, lien):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    paragraphes = soup.find_all('p')
+if uploaded_file is not None:
+    # Lire le fichier Excel téléchargé
+    df = pd.read_excel(uploaded_file)
 
-    if paragraphes:
-        paragraphe_choisi = random.choice(paragraphes)
-        ancre_lien = f'<a id="{ancre}" href="{lien}">{ancre}</a>'
-        paragraphe_choisi.append(BeautifulSoup(ancre_lien, 'html.parser'))
+    # Fonction pour insérer l'ancre et le lien dans le contenu HTML
+    def inserer_ancre_lien(html_content, ancre, lien):
+        soup = BeautifulSoup(html_content, 'html.parser')
+        paragraphes = soup.find_all('p')
 
-    return str(soup)
+        if paragraphes:
+            paragraphe_choisi = random.choice(paragraphes)
+            ancre_lien = f'<a id="{ancre}" href="{lien}">{ancre}</a>'
+            paragraphe_choisi.append(BeautifulSoup(ancre_lien, 'html.parser'))
 
-# Appliquer la fonction à chaque ligne du DataFrame
-df['F'] = df.apply(lambda row: inserer_ancre_lien(row['C'], row['D'], row['E']), axis=1)
+        return str(soup)
 
-# Sauvegarder le DataFrame modifié dans un nouveau fichier Excel
-df.to_excel('fichier_modifie.xlsx', index=False)
+    # Appliquer la fonction à chaque ligne du DataFrame
+    df['F'] = df.apply(lambda row: inserer_ancre_lien(row['C'], row['D'], row['E']), axis=1)
+
+    # Afficher le DataFrame modifié
+    st.write(df)
+
+    # Optionnel : Sauvegarder le DataFrame modifié dans un nouveau fichier Excel
+    # df.to_excel('fichier_modifie.xlsx', index=False)
+else:
+    st.write("Veuillez télécharger un fichier Excel.")
