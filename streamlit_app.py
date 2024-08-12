@@ -3,6 +3,9 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import random
 
+# Titre de l'application
+st.title("Modifier le contenu HTML dans un fichier Excel")
+
 # Interface pour télécharger le fichier Excel
 uploaded_file = st.file_uploader("Choisissez un fichier Excel", type="xlsx")
 
@@ -39,7 +42,28 @@ if uploaded_file is not None:
         # Afficher le DataFrame modifié
         st.write(df)
 
-        # Optionnel : Sauvegarder le DataFrame modifié dans un nouveau fichier Excel
-        # df.to_excel('fichier_modifie.xlsx', index=False)
+        # Sauvegarder le DataFrame modifié dans un nouveau fichier Excel avec une meilleure mise en page
+        output_file = 'fichier_modifie.xlsx'
+        with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False)
+            workbook = writer.book
+            worksheet = writer.sheets['Sheet1']
+
+            # Ajuster la largeur des colonnes pour une meilleure lisibilité
+            for col_num, col_name in enumerate(df.columns):
+                max_length = max(df[col_name].astype(str).map(len).max(), len(col_name))
+                worksheet.set_column(col_num, col_num, max_length + 2)
+
+            # Formater le contenu HTML pour une meilleure lisibilité
+            for row_num, row in enumerate(df['G']):
+                worksheet.write(row_num + 1, df.columns.get_loc('G'), row)
+
+        st.success(f"Le fichier a été modifié et sauvegardé sous le nom : {output_file}")
+        st.download_button(
+            label="Télécharger le fichier modifié",
+            data=open(output_file, 'rb'),
+            file_name=output_file,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 else:
     st.write("Veuillez télécharger un fichier Excel.")
