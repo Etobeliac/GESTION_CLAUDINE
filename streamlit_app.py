@@ -14,7 +14,7 @@ if uploaded_file is not None:
     st.write("Colonnes du DataFrame :", df.columns)
 
     # Vérifier si les colonnes nécessaires existent
-    required_columns = ['C', 'D', 'E']
+    required_columns = ['D', 'E', 'F']
     for col in required_columns:
         if col not in df.columns:
             st.error(f"La colonne '{col}' est manquante dans le fichier Excel.")
@@ -33,7 +33,7 @@ if uploaded_file is not None:
             return str(soup)
 
         # Appliquer la fonction à chaque ligne du DataFrame
-        df['F'] = df.apply(lambda row: inserer_ancre_lien(row['C'], row['D'], row['E']), axis=1)
+        df['G'] = df.apply(lambda row: inserer_ancre_lien(row['D'], row['E'], row['F']), axis=1)
 
         # Afficher le DataFrame modifié
         st.write(df)
