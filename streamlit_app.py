@@ -228,14 +228,17 @@ if uploaded_file is not None:
 
     if 'SITE A LINKER' not in sheet_names:
         st.error("La feuille 'SITE A LINKER' n'existe pas dans le fichier Excel.")
-    elif 'ARTICLE LINKER' not in sheet_names:
-        st.error("La feuille 'ARTICLE LINKER' n'existe pas dans le fichier Excel.")
     else:
-        # Lire les feuilles Excel
+        # Lire la feuille 'SITE A LINKER'
         df_site_a_linker = pd.read_excel(uploaded_file, sheet_name='SITE A LINKER')
-        df_article_linker = pd.read_excel(uploaded_file, sheet_name='ARTICLE LINKER')
 
-        # Créer les nouvelles lignes dans la feuille ARTICLE LINKER
+        # Vérifier si la feuille 'ARTICLE LINKER' existe, sinon la créer
+        if 'ARTICLE LINKER' not in sheet_names:
+            df_article_linker = pd.DataFrame(columns=['Lien', 'Ancre', 'Thématique', 'Lien Base'])
+        else:
+            df_article_linker = pd.read_excel(uploaded_file, sheet_name='ARTICLE LINKER')
+
+        # Créer les nouvelles lignes dans la feuille 'ARTICLE LINKER'
         nouvelles_lignes = []
         for index, row in df_site_a_linker.iterrows():
             nombre_de_liens = row['Nombre de lien']
@@ -251,12 +254,12 @@ if uploaded_file is not None:
                     'Lien Base': lien_tronque
                 })
 
-        # Ajouter les nouvelles lignes au DataFrame ARTICLE LINKER
+        # Ajouter les nouvelles lignes au DataFrame 'ARTICLE LINKER'
         df_nouvelles_lignes = pd.DataFrame(nouvelles_lignes)
         df_article_linker = pd.concat([df_article_linker, df_nouvelles_lignes], ignore_index=True)
 
         # Afficher le DataFrame mis à jour
-        st.write("Feuille ARTICLE LINKER mise à jour :")
+        st.write("Feuille 'ARTICLE LINKER' mise à jour :")
         st.dataframe(df_article_linker)
 
         # Sauvegarder le fichier Excel mis à jour
