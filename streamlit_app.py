@@ -232,44 +232,50 @@ if uploaded_file is not None:
         # Lire la feuille 'SITE A LINKER'
         df_site_a_linker = pd.read_excel(uploaded_file, sheet_name='SITE A LINKER')
 
-        # Vérifier si la feuille 'ARTICLE LINKER' existe, sinon la créer
-        if 'ARTICLE LINKER' not in sheet_names:
-            df_article_linker = pd.DataFrame(columns=['Lien', 'Ancre', 'Thématique', 'Lien Base'])
+        # Vérifier si les colonnes nécessaires existent
+        required_columns = ['Nombre de lien', 'Lien', 'Thématique']
+        missing_columns = [col for col in required_columns if col not in df_site_a_linker.columns]
+        if missing_columns:
+            st.error(f"Les colonnes suivantes sont manquantes dans la feuille 'SITE A LINKER': {', '.join(missing_columns)}")
         else:
-            df_article_linker = pd.read_excel(uploaded_file, sheet_name='ARTICLE LINKER')
+            # Vérifier si la feuille 'ARTICLE LINKER' existe, sinon la créer
+            if 'ARTICLE LINKER' not in sheet_names:
+                df_article_linker = pd.DataFrame(columns=['Lien', 'Ancre', 'Thématique', 'Lien Base'])
+            else:
+                df_article_linker = pd.read_excel(uploaded_file, sheet_name='ARTICLE LINKER')
 
-        # Créer les nouvelles lignes dans la feuille 'ARTICLE LINKER'
-        nouvelles_lignes = []
-        for index, row in df_site_a_linker.iterrows():
-            nombre_de_liens = row['Nombre de lien']
-            lien = row['Lien']
-            thematique = row['Thématique']
-            lien_tronque = tronquer_lien(lien)
+            # Créer les nouvelles lignes dans la feuille 'ARTICLE LINKER'
+            nouvelles_lignes = []
+            for index, row in df_site_a_linker.iterrows():
+                nombre_de_liens = row['Nombre de lien']
+                lien = row['Lien']
+                thematique = row['Thématique']
+                lien_tronque = tronquer_lien(lien)
 
-            for _ in range(nombre_de_liens):
-                nouvelles_lignes.append({
-                    'Lien': lien,
-                    'Ancre': generer_ancre(),
-                    'Thématique': thematique,
-                    'Lien Base': lien_tronque
-                })
+                for _ in range(nombre_de_liens):
+                    nouvelles_lignes.append({
+                        'Lien': lien,
+                        'Ancre': generer_ancre(),
+                        'Thématique': thematique,
+                        'Lien Base': lien_tronque
+                    })
 
-        # Ajouter les nouvelles lignes au DataFrame 'ARTICLE LINKER'
-        df_nouvelles_lignes = pd.DataFrame(nouvelles_lignes)
-        df_article_linker = pd.concat([df_article_linker, df_nouvelles_lignes], ignore_index=True)
+            # Ajouter les nouvelles lignes au DataFrame 'ARTICLE LINKER'
+            df_nouvelles_lignes = pd.DataFrame(nouvelles_lignes)
+            df_article_linker = pd.concat([df_article_linker, df_nouvelles_lignes], ignore_index=True)
 
-        # Afficher le DataFrame mis à jour
-        st.write("Feuille 'ARTICLE LINKER' mise à jour :")
-        st.dataframe(df_article_linker)
+            # Afficher le DataFrame mis à jour
+            st.write("Feuille 'ARTICLE LINKER' mise à jour :")
+            st.dataframe(df_article_linker)
 
-        # Sauvegarder le fichier Excel mis à jour
-        with pd.ExcelWriter('output.xlsx') as writer:
-            df_site_a_linker.to_excel(writer, sheet_name='SITE A LINKER', index=False)
-            df_article_linker.to_excel(writer, sheet_name='ARTICLE LINKER', index=False)
+            # Sauvegarder le fichier Excel mis à jour
+            with pd.ExcelWriter('output.xlsx') as writer:
+                df_site_a_linker.to_excel(writer, sheet_name='SITE A LINKER', index=False)
+                df_article_linker.to_excel(writer, sheet_name='ARTICLE LINKER', index=False)
 
-        st.download_button(
-            label="Télécharger le fichier Excel mis à jour",
-            data=open('output.xlsx', 'rb'),
-            file_name='output.xlsx',
-            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+            st.download_button(
+                label="Télécharger le fichier Excel mis à jour",
+                data=open('output.xlsx', 'rb'),
+                file_name='output.xlsx',
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
