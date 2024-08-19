@@ -205,7 +205,8 @@ def generer_ancre():
     "Pour explorer ce sujet, cliquez ici.",
     "Découvrez toutes les informations en cliquant ici.",
     "Pour plus de renseignements, cliquez ici."
-]
+    ]
+    return random.choice(ancres)
 
 # Fonction pour générer une ancre aléatoire
 def generer_ancre():
