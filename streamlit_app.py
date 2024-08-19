@@ -227,7 +227,7 @@ if uploaded_file is not None:
         df_site_a_linker = pd.read_excel(uploaded_file, sheet_name='SITE A LINKER')
 
         # Vérifier si les colonnes nécessaires existent
-        required_columns = ['Nombre de lien', 'Lien', 'Thématique']
+        required_columns = ['Nombre de lien', 'Lien', 'Thématique', 'URL Site', 'URL Brouillon', 'Contenu']
         missing_columns = [col for col in required_columns if col not in df_site_a_linker.columns]
         if missing_columns:
             st.error(f"Les colonnes suivantes sont manquantes dans la feuille 'SITE A LINKER': {', '.join(missing_columns)}")
