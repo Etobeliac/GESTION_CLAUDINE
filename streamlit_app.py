@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 import random
 
-# Liste des ancres
-ancres = [
+# Fonction pour générer une ancre aléatoire
+def generer_ancre():
+    ancres = [
     "Cliquez ici pour découvrir les détails.",
     "Pour plus d'infos, suivez ce lien.",
     "En savoir plus en cliquant ici.",
