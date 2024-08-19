@@ -208,7 +208,6 @@ ancres = [
 
 # Fonction pour générer une ancre aléatoire
 def generer_ancre():
-    # Ajoutez votre liste d'ancres ici
     ancres = [
         # Ajoutez vos ancres ici
     ]
